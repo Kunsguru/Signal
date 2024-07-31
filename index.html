@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satellite Signal Finder</title>
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.display {
+    margin-bottom: 20px;
+}
+
+#signalBar {
+    width: 100%;
+    height: 30px;
+    background-color: lightgray;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+#signalBar::after {
+    content: "";
+    display: block;
+    height: 100%;
+    background-color: green;
+    width: 50%; /* Initial value, will be updated by JavaScript */
+    transition: width 0.3s ease-in-out;
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Satellite Signal Finder</h1>
+        <div class="display">
+            <p>Current Signal Strength: <span id="signalValue">50</span></p>
+            <div id="signalBar"></div>
+        </div>
+        <div class="controls">
+            <p>Move your device to find the best signal.</p>
+        </div>
+    </div>
+    <script>
+let signalStrength = 50;
+
+function updateSignalDisplay() {
+    const signalValue = document.getElementById('signalValue');
+    const signalBar = document.getElementById('signalBar');
+
+    signalValue.textContent = signalStrength;
+    signalBar.querySelector('::after').style.width = signalStrength + '%';
+}
+
+function calculateSignalStrength(alpha, beta, gamma) {
+    // Use the angles to simulate a dynamic signal strength calculation
+    const maxAngle = 360;
+    const minAngle = 0;
+    
+    // Normalize the alpha value to a 0-100 range for signal strength
+    const normalizedAlpha = (alpha - minAngle) / (maxAngle - minAngle) * 100;
+    
+    // Update the signal strength, ensuring it stays within 0-100
+    signalStrength = Math.max(0, Math.min(100, Math.round(normalizedAlpha)));
+}
+
+if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', (event) => {
+        const { alpha, beta, gamma } = event;
+        calculateSignalStrength(alpha, beta, gamma);
+        updateSignalDisplay();
+    });
+} else {
+    alert("Device orientation not supported on your device.");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateSignalDisplay(); // Initialize the signal display
+});
+
+</script>
+</body>
+</html>
